@@ -17,6 +17,7 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/et_search_country"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="10dp"
             android:hint="@string/search_by_country_name"

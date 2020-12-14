@@ -2,6 +2,8 @@ package com.soumya.wwdablu.phoneinputext
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.telephony.TelephonyManager
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -10,6 +12,7 @@ import android.view.View.OnClickListener
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
+import com.bumptech.glide.Glide
 import com.soumya.wwdablu.phoneinputext.model.Country
 import com.soumya.wwdablu.phoneinputext.repository.CountryRepo
 import io.reactivex.rxjava3.observers.DisposableObserver
@@ -27,6 +30,7 @@ class PhoneInputExt : CardView {
 
     private var mDataMode: DataMode = DataMode.FETCH
     private var mAutoPopulate: Boolean = false
+    private lateinit var mHandler: Handler
 
     constructor(context: Context) : super(context) {
         initView()
@@ -76,11 +80,26 @@ class PhoneInputExt : CardView {
     }
 
     private fun initView() {
-        radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics)
+
+        mHandler = Handler()
+
+        radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics)
         LayoutInflater.from(context).inflate(R.layout.phone_input_ext, this, true)
 
         findViewById<ImageView>(R.id.iv_country_flag).setOnClickListener(mClickListener)
+        updateCountryFlag(getDeviceCountryCode())
+
         findViewById<AppCompatTextView>(R.id.tv_country_phone_code).setOnClickListener(mClickListener)
+    }
+
+    private fun updateCountryFlag(code: String) {
+
+        val imageView = findViewById<ImageView>(R.id.iv_country_flag)
+        imageView.setOnClickListener(mClickListener)
+        Glide.with(context)
+                .asBitmap()
+                .load("https://www.countryflags.io/$code/flat/64.png")
+                .into(imageView)
     }
 
     private fun fetchListOfCountries() {
@@ -94,13 +113,51 @@ class PhoneInputExt : CardView {
             }
 
             override fun onComplete() {
-                //
+
+                val code2 = getDeviceCountryCode()
+                val currentCountry: Country? = mCountryList.find {
+                    it.countryCode2.equals(code2, true)
+                }
+
+                findViewById<AppCompatTextView>(R.id.tv_country_phone_code).text = "${currentCountry?.countryCallingCode}"
             }
         })
     }
 
+    private fun getDeviceCountryCode() : String {
+
+        val telMgr: TelephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                ?: return "IN"
+
+        return when (telMgr.simState) {
+
+            TelephonyManager.SIM_STATE_ABSENT -> {
+                TimeZone.getDefault().id
+            }
+
+            TelephonyManager.SIM_STATE_READY -> {
+                telMgr.networkCountryIso
+            }
+
+            else -> {
+                "IN"
+            }
+        }
+    }
+
+    private val mCountryChangeListener: CountryChangeListener = object: CountryChangeListener {
+
+        override fun onCountrySelected(country: Country) {
+            mHandler.post {
+                updateCountryFlag(country.countryCode2)
+            }
+        }
+    }
+
     private val mClickListener: OnClickListener = OnClickListener {
 
-        context.startActivity(Intent(context, SearchCountryActivity::class.java))
+        val intent: Intent = Intent(context, SearchCountryActivity::class.java)
+        //intent.putExtra("callback", mCountryChangeListener)
+        context.startActivity(intent)
     }
 }

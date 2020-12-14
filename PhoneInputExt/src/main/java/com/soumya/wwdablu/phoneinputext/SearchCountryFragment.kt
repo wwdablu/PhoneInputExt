@@ -1,10 +1,14 @@
 package com.soumya.wwdablu.phoneinputext
 
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +20,13 @@ import java.util.*
 class SearchCountryFragment : Fragment() {
 
     private var mAdapter: CountriesAdapter = CountriesAdapter()
+    private lateinit var mSearchCountryEditText: AppCompatEditText
+    private lateinit var mHandler: Handler
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mHandler = Handler()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,28 +38,44 @@ class SearchCountryFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_country_list)
         recyclerView.adapter = mAdapter
-        recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        fetchData()
+        mSearchCountryEditText = view.findViewById(R.id.et_search_country)
+        mSearchCountryEditText.addTextChangedListener(mTextWatcher)
 
         return view
     }
 
-    private fun fetchData() {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mSearchCountryEditText.removeTextChangedListener(mTextWatcher)
+    }
 
-        CountryRepo.fetchListOfCountries(object: DisposableObserver<LinkedList<Country>>() {
-            override fun onNext(t: LinkedList<Country>?) {
-                mAdapter.setData(t ?: LinkedList())
-            }
+    fun setChangeListener(countryChangeListener: CountryChangeListener) {
+        mAdapter.setChangeListener(countryChangeListener)
+    }
 
-            override fun onError(e: Throwable?) {
-                //
-            }
+    private val mTextWatcher: TextWatcher = object: TextWatcher {
 
-            override fun onComplete() {
-                //
-            }
-        })
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            //
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            mHandler.removeCallbacks(mSearchRunnable)
+            mHandler.postDelayed(mSearchRunnable, if (s.isNullOrBlank() || s.isNullOrEmpty()) 0 else 250)
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            //
+        }
+
+    }
+
+    private val mSearchRunnable: Runnable = Runnable {
+
+        if(!isDetached || !isRemoving) {
+            mAdapter.searchAndShow(mSearchCountryEditText.text.toString())
+        }
     }
 }

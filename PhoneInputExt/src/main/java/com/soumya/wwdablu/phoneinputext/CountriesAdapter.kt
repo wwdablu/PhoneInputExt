@@ -1,6 +1,5 @@
 package com.soumya.wwdablu.phoneinputext
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -8,15 +7,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.soumya.wwdablu.phoneinputext.databinding.ItemCountryInfoBinding
 import com.soumya.wwdablu.phoneinputext.model.Country
+import com.soumya.wwdablu.phoneinputext.repository.CountryRepo
+import io.reactivex.rxjava3.observers.DisposableObserver
 import java.util.*
 
 internal class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.CountryViewHolder>() {
 
     private var mCountryList: LinkedList<Country> = LinkedList()
+    private var mOriginalCountryList: LinkedList<Country> = LinkedList()
 
-    fun setData(list: LinkedList<Country>) {
-        mCountryList = list
-        notifyDataSetChanged()
+    private var mCountryChangeListener: CountryChangeListener? = null
+
+    init {
+        fetchData()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -35,9 +38,34 @@ internal class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.CountryV
         return mCountryList.size
     }
 
+    fun searchAndShow(search: String) {
+
+        val list: List<Country> = if(search.isEmpty() || search.isBlank()) {
+            mOriginalCountryList
+        } else {
+            mOriginalCountryList.filter {
+                it.countryName.startsWith(search, true)
+            }
+        }
+
+        mCountryList.clear()
+        mCountryList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setChangeListener(countryChangeListener: CountryChangeListener) {
+        mCountryChangeListener = countryChangeListener
+    }
+
     inner class CountryViewHolder(viewBinding: ItemCountryInfoBinding) : RecyclerView.ViewHolder(viewBinding.root) {
 
         private val mViewBinding: ItemCountryInfoBinding = viewBinding
+
+        init {
+            mViewBinding.root.setOnClickListener {
+                mCountryChangeListener?.onCountrySelected(mCountryList[adapterPosition])
+            }
+        }
 
         fun bind(country: Country) {
             mViewBinding.country = country
@@ -52,5 +80,24 @@ internal class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.CountryV
                 mViewBinding.ivCountryFlag.setImageDrawable(country.countryFlagDrawable)
             }
         }
+    }
+
+    private fun fetchData() {
+
+        CountryRepo.fetchListOfCountries(object: DisposableObserver<LinkedList<Country>>() {
+            override fun onNext(t: LinkedList<Country>?) {
+                mCountryList = t ?: LinkedList()
+                mOriginalCountryList.clear()
+                mOriginalCountryList.addAll(mCountryList)
+            }
+
+            override fun onError(e: Throwable?) {
+                //
+            }
+
+            override fun onComplete() {
+                notifyDataSetChanged()
+            }
+        })
     }
 }
