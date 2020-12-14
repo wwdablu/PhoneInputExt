@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PhoneInputExt">
+        <attr name="dataMode" format="enum">
+            <enum name="fetch" value="0"/>
+            <enum name="provide" value="1"/>
+        </attr>
+
+        <attr name="autoPopulate" format="boolean"/>
+
+    </declare-styleable>
+</resources>

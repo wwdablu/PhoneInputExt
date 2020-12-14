@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cv_search_container"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="#CFCFCF"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        app:cardCornerRadius="8dp">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="10dp"
+            android:hint="@string/search_by_country_name"
+            android:gravity="center|start"
+            android:textAlignment="textStart"
+            android:layout_margin="8dp"
+            android:background="@null"
+            />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rv_country_list"
+        android:layout_below="@id/cv_search_container"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        />
+
+</RelativeLayout>

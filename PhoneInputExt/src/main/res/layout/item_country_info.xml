@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="country"
+            type="com.soumya.wwdablu.phoneinputext.model.Country" />
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rl_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/iv_country_flag"
+            android:contentDescription="@string/flag_of_the_country"
+            android:layout_margin="8dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_country_name_english"
+            android:layout_toEndOf="@id/iv_country_flag"
+            android:text="@{country.countryName}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_country_phone_code"
+            android:layout_alignParentEnd="true"
+            android:text="@{country.countryCallingCode}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+</layout>

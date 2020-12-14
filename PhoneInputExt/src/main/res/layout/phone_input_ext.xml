@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!-- Shows the country flag -->
+        <ImageView
+            android:layout_width="@dimen/space_6"
+            android:layout_height="@dimen/space_6"
+            android:id="@+id/iv_country_flag"
+            android:src="@drawable/ic_india"
+            android:layout_marginStart="@dimen/space_3"
+            android:layout_marginTop="@dimen/space_3"
+            android:layout_marginBottom="@dimen/space_3"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/flag_of_the_country"
+            />
+
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fl_country_code_container"
+            android:layout_toEndOf="@id/iv_country_flag"
+            android:layout_marginStart="@dimen/space_2"
+            android:layout_centerVertical="true">
+
+            <!-- Shows the country code -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_country_phone_code"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="+91"
+                app:drawableTint="@color/black"
+                app:drawableEndCompat="@drawable/ic_down_arrow" />
+
+        </FrameLayout>
+
+        <!-- User to provide the phone number -->
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_phone_number"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@id/fl_country_code_container"
+            android:layout_centerVertical="true"
+            android:hint="@string/phone_number"
+            android:background="@null"
+            />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
