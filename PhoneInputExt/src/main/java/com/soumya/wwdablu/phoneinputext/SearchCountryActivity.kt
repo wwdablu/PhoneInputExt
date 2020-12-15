@@ -2,14 +2,14 @@ package com.soumya.wwdablu.phoneinputext
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.soumya.wwdablu.phoneinputext.model.Country
 
-class SearchCountryActivity : AppCompatActivity() {
+class SearchCountryActivity : AppCompatActivity(), SearchCountryFragment.CountryListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_country)
 
-        val fragment = SearchCountryFragment()
-        //fragment.setChangeListener(intent.getSerializableExtra("callback") as CountryChangeListener)
+        val fragment = SearchCountryFragment(this)
 
         supportFragmentManager.beginTransaction()
                 .add(R.id.fl_search_frag_container, fragment, SearchCountryFragment::class.java.simpleName)
@@ -24,5 +24,9 @@ class SearchCountryActivity : AppCompatActivity() {
         }
 
         super.onBackPressed()
+    }
+
+    override fun onCountrySelected(country: Country) {
+        finish()
     }
 }

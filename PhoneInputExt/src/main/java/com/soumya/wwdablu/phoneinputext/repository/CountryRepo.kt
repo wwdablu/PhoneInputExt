@@ -9,9 +9,23 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.Exception
 import java.util.*
 
-object CountryRepo {
+internal object CountryRepo {
 
     private val mCountryList: LinkedList<Country> = LinkedList()
+    private var mUserSelectedCountry: Country? = null
+
+    fun getUserSelectedCountry() : Country? {
+        return mUserSelectedCountry
+    }
+
+    fun setUserSelectedCountry(country: Country?) {
+        mUserSelectedCountry = country
+    }
+
+    fun setUserDefinedCountryList(list: LinkedList<Country>) {
+        mCountryList.clear()
+        mCountryList.addAll(list)
+    }
 
     fun fetchListOfCountries(observer: DisposableObserver<LinkedList<Country>>) {
 

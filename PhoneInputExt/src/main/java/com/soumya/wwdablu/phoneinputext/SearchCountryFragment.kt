@@ -4,22 +4,24 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.soumya.wwdablu.phoneinputext.model.Country
-import com.soumya.wwdablu.phoneinputext.repository.CountryRepo
-import io.reactivex.rxjava3.observers.DisposableObserver
-import java.util.*
 
-class SearchCountryFragment : Fragment() {
+class SearchCountryFragment(listener: CountryListener) : Fragment(), CountriesAdapter.CountryListener {
 
-    private var mAdapter: CountriesAdapter = CountriesAdapter()
+    interface CountryListener {
+        fun onCountrySelected(country: Country)
+    }
+
+    private var mAdapter: CountriesAdapter = CountriesAdapter(this)
+    private val mListener: CountryListener = listener
     private lateinit var mSearchCountryEditText: AppCompatEditText
     private lateinit var mHandler: Handler
 
@@ -39,6 +41,7 @@ class SearchCountryFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_country_list)
         recyclerView.adapter = mAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         mSearchCountryEditText = view.findViewById(R.id.et_search_country)
         mSearchCountryEditText.addTextChangedListener(mTextWatcher)
@@ -51,8 +54,8 @@ class SearchCountryFragment : Fragment() {
         mSearchCountryEditText.removeTextChangedListener(mTextWatcher)
     }
 
-    fun setChangeListener(countryChangeListener: CountryChangeListener) {
-        mAdapter.setChangeListener(countryChangeListener)
+    override fun onCountrySelected(country: Country) {
+        mListener.onCountrySelected(country)
     }
 
     private val mTextWatcher: TextWatcher = object: TextWatcher {

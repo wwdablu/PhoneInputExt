@@ -26,6 +26,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_country_name_english"
             android:layout_toEndOf="@id/iv_country_flag"
+            android:layout_toStartOf="@id/tv_country_phone_code"
+            android:paddingEnd="@dimen/space_5"
             android:text="@{country.countryName}"
             android:textColor="@color/black"
             android:textSize="16sp"

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PhoneInputExtSample</string>
+    <string name="fetch">Fetch</string>
 </resources>

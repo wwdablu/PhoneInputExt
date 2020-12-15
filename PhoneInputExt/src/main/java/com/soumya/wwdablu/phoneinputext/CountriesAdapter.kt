@@ -11,12 +11,15 @@ import com.soumya.wwdablu.phoneinputext.repository.CountryRepo
 import io.reactivex.rxjava3.observers.DisposableObserver
 import java.util.*
 
-internal class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.CountryViewHolder>() {
+internal class CountriesAdapter(listener: CountryListener) : RecyclerView.Adapter<CountriesAdapter.CountryViewHolder>() {
+
+    interface CountryListener {
+        fun onCountrySelected(country: Country)
+    }
 
     private var mCountryList: LinkedList<Country> = LinkedList()
     private var mOriginalCountryList: LinkedList<Country> = LinkedList()
-
-    private var mCountryChangeListener: CountryChangeListener? = null
+    private var mCountryListener: CountryListener = listener
 
     init {
         fetchData()
@@ -53,17 +56,16 @@ internal class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.CountryV
         notifyDataSetChanged()
     }
 
-    fun setChangeListener(countryChangeListener: CountryChangeListener) {
-        mCountryChangeListener = countryChangeListener
-    }
-
     inner class CountryViewHolder(viewBinding: ItemCountryInfoBinding) : RecyclerView.ViewHolder(viewBinding.root) {
 
         private val mViewBinding: ItemCountryInfoBinding = viewBinding
 
         init {
             mViewBinding.root.setOnClickListener {
-                mCountryChangeListener?.onCountrySelected(mCountryList[adapterPosition])
+
+                val country = mCountryList[adapterPosition]
+                CountryRepo.setUserSelectedCountry(country)
+                mCountryListener.onCountrySelected(country)
             }
         }
 
