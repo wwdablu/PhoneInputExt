@@ -29,5 +29,18 @@ list.add(Country("Japan", "日本", "81", "JP", "JPN", null, "https://www.countr
 findViewById<PhoneInputExt>(R.id.pie_phone).setLiftOfCountries(list)
 ```  
 
+Gradle:  
+``` 
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+    
+dependencies {
+    implementation 'com.github.wwdablu:PhoneInputExt:1.0.0'
+}
+```
+
 Sample:  
 ![Sample Implementation](https://github.com/wwdablu/PhoneInputExt/blob/master/sample/PhoneInputExt_v1.gif)
