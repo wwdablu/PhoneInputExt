@@ -30,7 +30,7 @@ internal object CountryRepo {
     fun fetchListOfCountries(observer: DisposableObserver<LinkedList<Country>>) {
 
         if(mCountryList.size != 0) {
-            observer.onNext(mCountryList)
+            observer.onNext(LinkedList(mCountryList))
             observer.onComplete()
             return
         }
@@ -68,7 +68,7 @@ internal object CountryRepo {
                                 )
                             }
 
-                            observer.onNext(mCountryList)
+                            observer.onNext(LinkedList(mCountryList))
                         }
                     }
 

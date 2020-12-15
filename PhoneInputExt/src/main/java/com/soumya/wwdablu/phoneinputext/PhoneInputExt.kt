@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.telephony.TelephonyManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.OnClickListener
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
@@ -35,6 +39,7 @@ class PhoneInputExt : CardView {
     private lateinit var mCountryCodeTextView: AppCompatTextView
     private lateinit var mPhoneNumberEditText: AppCompatEditText
     private lateinit var mCountryFlagImageView: ImageView
+    private lateinit var mClearImageButton: ImageButton
 
     constructor(context: Context) : super(context) {
         initView()
@@ -57,6 +62,11 @@ class PhoneInputExt : CardView {
             updateCountryFlag(country)
             mCountryCodeTextView.text = country.countryCallingCode
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        mPhoneNumberEditText.removeTextChangedListener(mPhoneInputWatcher)
     }
 
     /**
@@ -121,6 +131,12 @@ class PhoneInputExt : CardView {
         mCountryCodeTextView.setOnClickListener(mClickListener)
 
         mPhoneNumberEditText = findViewById(R.id.et_phone_number)
+        mPhoneNumberEditText.addTextChangedListener(mPhoneInputWatcher)
+
+        mClearImageButton = findViewById(R.id.ib_clear)
+        mClearImageButton.setOnClickListener {
+            mPhoneNumberEditText.text?.clear()
+        }
     }
 
     private fun updateCountryFlag(country: Country) {
@@ -194,5 +210,25 @@ class PhoneInputExt : CardView {
     private val mClickListener: OnClickListener = OnClickListener {
 
         context.startActivity(Intent(context, SearchCountryActivity::class.java))
+    }
+
+    private val mPhoneInputWatcher: TextWatcher = object: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            //
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            mClearImageButton.visibility  = if(s.toString().isEmpty() || s.toString().isBlank()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            //
+        }
+
     }
 }
